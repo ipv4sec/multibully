@@ -209,7 +209,7 @@ func (p *Participant) becomeLeader() {
 	p.sendMessage(CoordinatorMessage)
 	p.state = Leader
 	p.leaderPid = p.pid
-	go p.callback(Leader, nil)
+	go p.callback(Leader, p.IP)
 	p.startAnnounceTicker()
 }
 

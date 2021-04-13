@@ -1,7 +1,7 @@
 package multibully_test
 
 import (
-	"github.com/tomtaylor/multibully"
+	"github.com/ipv4sec/multibully"
 	"net"
 	"testing"
 )

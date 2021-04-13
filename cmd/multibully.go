@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/tomtaylor/multibully"
-	"log"
-	"os"
-	"net"
 	"flag"
+	"github.com/ipv4sec/multibully"
+	"log"
+	"net"
+	"os"
 )
 
 
@@ -23,7 +23,7 @@ func main() {
 		case multibully.Follower:
 			log.Println("* Became Follower of", ip)
 		case multibully.Leader:
-			log.Println("* Became Leader")
+			log.Println("* Became Leader", ip)
 		}
 	})
 

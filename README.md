@@ -16,7 +16,7 @@ While MultiBully uses multicast UDP for communication between nodes, it transmit
 package main
 
 import (
-	"github.com/tomtaylor/multibully"
+	"github.com/ipv4sec/multibully"
 	"log"
 	"os"
 	"net"
@@ -33,7 +33,7 @@ func main() {
 		case multibully.Follower:
 			log.Println("* Became Follower of", ip)
 		case multibully.Leader:
-			log.Println("* Became Leader")
+			log.Println("* Became Leader", ip)
 		}
 	})
 
