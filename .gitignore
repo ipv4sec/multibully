@@ -1,3 +1,5 @@
 .idea/
 
 multibully
+go.sum
+go.mod
