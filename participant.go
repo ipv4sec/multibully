@@ -168,8 +168,8 @@ func (p *Participant) handleOKMessage(m *Message) {
 
 func (p *Participant) handleCoordinatorMessage(m *Message) {
 	if p.messageHasPriority(m) {
-		p.becomeFollower(m.PID, m.IP)
 		p.stopElection()
+		p.becomeFollower(m.PID, m.IP)
 	} else {
 		log.Print("* Received CoordinatorMessage from smaller PID, starting election")
 		p.StartElection()
