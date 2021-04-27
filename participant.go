@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-const listenTimeout = 500
+const listenTimeout = 20000
 const leaderAnnouncementInterval = 250
 const electionTimeout = 2000
 
@@ -168,8 +168,8 @@ func (p *Participant) handleOKMessage(m *Message) {
 
 func (p *Participant) handleCoordinatorMessage(m *Message) {
 	if p.messageHasPriority(m) {
-		p.becomeFollower(m.PID, m.IP)
 		p.stopElection()
+		p.becomeFollower(m.PID, m.IP)
 	} else {
 		log.Print("* Received CoordinatorMessage from smaller PID, starting election")
 		p.StartElection()
@@ -181,9 +181,6 @@ func (p *Participant) becomeFollower(pid uint64, ip *net.IP) {
 		p.state = Follower
 		p.leaderPid = pid
 		go p.callback(Follower, ip)
-	}
-
-	if pid == p.leaderPid {
 		p.startListeningForLeader()
 	}
 }
