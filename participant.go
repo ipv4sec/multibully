@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-const listenTimeout = 1000
+const listenTimeout = 16000
 const leaderAnnouncementInterval = 250
 const electionTimeout = 2000
 
