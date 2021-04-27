@@ -181,9 +181,6 @@ func (p *Participant) becomeFollower(pid uint64, ip *net.IP) {
 		p.state = Follower
 		p.leaderPid = pid
 		go p.callback(Follower, ip)
-	}
-
-	if pid == p.leaderPid {
 		p.startListeningForLeader()
 	}
 }
