@@ -34,7 +34,7 @@ type Participant struct {
 	waitGroup      *sync.WaitGroup
 	electionTimer  *time.Timer
 	announceTicker *time.Ticker
-	listenTimer    *time.Timer
+	listenTicker    *time.Ticker
 	leaderPid      uint64
 }
 
@@ -78,7 +78,7 @@ func NewParticipantWithTransport(t Transport, IP *net.IP, pid uint64, callback C
 		waitGroup:      &sync.WaitGroup{},
 		electionTimer:  nil,
 		announceTicker: nil,
-		listenTimer:    nil,
+		listenTicker:    nil,
 		leaderPid:      0,
 	}
 
@@ -212,15 +212,22 @@ func (p *Participant) becomeLeader() {
 
 func (p *Participant) startListeningForLeader() {
 	p.stopListeningForLeader()
-	p.listenTimer = time.AfterFunc(listenTimeout*time.Millisecond, func() {
-		log.Println("* Leader did not broadcast within timeout, starting election")
-		p.StartElection()
-	})
+	//p.listenTicker = time.NewTimer(listenTimeout*time.Millisecond, func() {
+	//	log.Println("* Leader did not broadcast within timeout, starting election")
+	//	p.StartElection()
+	//})
+	p.listenTicker = time.NewTicker(listenTimeout*time.Millisecond)
+	go func() {
+		for range p.listenTicker.C {
+			log.Println("* Leader did not broadcast within timeout, starting election")
+			p.StartElection()
+		}
+	}()
 }
 
 func (p *Participant) stopListeningForLeader() {
-	if p.listenTimer != nil {
-		p.listenTimer.Stop()
+	if p.listenTicker != nil {
+		p.listenTicker.Reset(listenTimeout*time.Millisecond)
 	}
 }
 
@@ -237,7 +244,7 @@ func (p *Participant) startAnnounceTicker() {
 
 func (p *Participant) stopAnnounceTicker() {
 	if p.announceTicker != nil {
-		p.announceTicker.Stop()
+		p.announceTicker.Reset(leaderAnnouncementInterval * time.Millisecond)
 	}
 }
 
