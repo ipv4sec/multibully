@@ -170,6 +170,7 @@ func (p *Participant) handleCoordinatorMessage(m *Message) {
 	if p.messageHasPriority(m) {
 		p.stopElection()
 		p.becomeFollower(m.PID, m.IP)
+		p.stopListeningForLeader()
 	} else {
 		log.Print("* Received CoordinatorMessage from smaller PID, starting election")
 		p.StartElection()
@@ -220,7 +221,7 @@ func (p *Participant) startListeningForLeader() {
 
 func (p *Participant) stopListeningForLeader() {
 	if p.listenTimer != nil {
-		p.listenTimer.Stop()
+		p.listenTimer.Reset(listenTimeout*time.Millisecond)
 	}
 }
 
