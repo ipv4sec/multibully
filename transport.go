@@ -49,8 +49,8 @@ func (t *MulticastTransport) Read() (*Message, error) {
 Loop:
 	for {
 		num, _, e := t.readConn.ReadFrom(readBuffer)
-		if err != nil {
-			log.Println(err)
+		if e != nil {
+			log.Println(e)
 			err = e
 		}
 
@@ -61,6 +61,7 @@ Loop:
 			t.buffer = t.buffer[msgBlockSize:]
 			break Loop
 		}
+		break Loop
 	}
 
 	return msg, err
