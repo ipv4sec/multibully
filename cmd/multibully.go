@@ -13,7 +13,7 @@ func main() {
 	var iface *string
 	var id *string
 	iface = flag.String("iface", "eth0", "eth0")
-	iface = flag.String("id", "default", "id")
+	id = flag.String("id", "default", "id")
 	flag.Parse()
 
 	address := "224.0.0.0:9999"
