@@ -28,6 +28,7 @@ type Participant struct {
 	transport      Transport
 	IP             *net.IP
 	pid            uint64
+	id             string
 	txChan         chan *Message
 	rxChan         chan *Message
 	stop           bool
@@ -38,7 +39,7 @@ type Participant struct {
 	leaderPid      uint64
 }
 
-func NewParticipant(address string, ifaceName string, pid uint64, callback Callback) (*Participant, error) {
+func NewParticipant(address string, ifaceName string, pid uint64, id string, callback Callback) (*Participant, error) {
 	addr, err := net.ResolveUDPAddr("udp", address)
 	if err != nil {
 		return nil, err
@@ -62,16 +63,17 @@ func NewParticipant(address string, ifaceName string, pid uint64, callback Callb
 		return nil, err
 	}
 
-	return NewParticipantWithTransport(t, sourceIP, pid, callback), nil
+	return NewParticipantWithTransport(t, sourceIP, pid, id, callback), nil
 }
 
-func NewParticipantWithTransport(t Transport, IP *net.IP, pid uint64, callback Callback) *Participant {
+func NewParticipantWithTransport(t Transport, IP *net.IP, pid uint64, id string, callback Callback) *Participant {
 	p := &Participant{
 		callback:       callback,
 		state:          Follower,
 		transport:      t,
 		IP:             IP,
 		pid:            pid,
+		id:             id,
 		txChan:         make(chan *Message),
 		rxChan:         make(chan *Message),
 		stop:           false,
@@ -109,9 +111,10 @@ func (p *Participant) RunLoop(done chan struct{}) {
 				if msg.PID == p.pid {
 					continue
 				}
-
-				log.Printf("< %+v", msg)
-				p.handleMessage(msg)
+				if msg.ID == p.id {
+					log.Printf("< %+v", msg)
+					p.handleMessage(msg)
+				}
 			}
 		}
 		p.waitGroup.Done()
@@ -246,7 +249,7 @@ func (p *Participant) stopAnnounceTicker() {
 }
 
 func (p *Participant) sendMessage(kind uint8) {
-	m := &Message{Kind: kind, PID: p.pid, IP: p.IP}
+	m := &Message{ID: p.id, Kind: kind, PID: p.pid, IP: p.IP}
 	p.txChan <- m
 }
 

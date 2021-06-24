@@ -11,14 +11,16 @@ import (
 
 func main() {
 	var iface *string
-	iface = flag.String("iface", "en0", "interface for multicast broadcast")
+	var id *string
+	iface = flag.String("iface", "eth0", "eth0")
+	iface = flag.String("id", "default", "id")
 	flag.Parse()
 
 	address := "224.0.0.0:9999"
 	stop := make(chan struct{})
 	pid := uint64(os.Getpid())
 
-	p, err := multibully.NewParticipant(address, *iface, pid, func(state int, ip *net.IP) {
+	p, err := multibully.NewParticipant(address, *iface, pid, *id, func(state int, ip *net.IP) {
 		switch state {
 		case multibully.Follower:
 			log.Println("* Became Follower of", ip)
