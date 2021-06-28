@@ -201,7 +201,9 @@ func (p *Participant) StartElection() {
 
 func (p *Participant) stopElection() {
 	if p.electionTimer != nil {
-		p.electionTimer.Stop()
+		if !p.electionTimer.Stop() {
+			<-p.electionTimer.C
+		}
 	}
 }
 
