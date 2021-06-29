@@ -8,9 +8,9 @@ import (
 	"time"
 )
 
-const listenTimeout = 4000
-const leaderAnnouncementInterval = 250
-const electionTimeout = 2000
+const listenTimeout = 16
+const leaderAnnouncementInterval = 1
+const electionTimeout = 8
 
 // Callback is the function that is called when the node state changes
 type Callback func(state int, leaderIP *net.IP)
@@ -193,7 +193,7 @@ func (p *Participant) StartElection() {
 	p.stopElection()
 	p.sendMessage(ElectionMessage)
 
-	p.electionTimer = time.AfterFunc(electionTimeout*time.Millisecond, func() {
+	p.electionTimer = time.AfterFunc(electionTimeout*time.Second, func() {
 		log.Println("* Nothing replied to election broadcast, become leader")
 		p.becomeLeader()
 	})
@@ -217,7 +217,7 @@ func (p *Participant) becomeLeader() {
 
 func (p *Participant) startListeningForLeader() {
 	p.stopListeningForLeader()
-	p.listenTicker = time.NewTicker(listenTimeout*time.Millisecond)
+	p.listenTicker = time.NewTicker(listenTimeout*time.Second)
 
 	go func() {
 		for range p.listenTicker.C {
@@ -235,7 +235,7 @@ func (p *Participant) stopListeningForLeader() {
 
 func (p *Participant) startAnnounceTicker() {
 	p.stopAnnounceTicker()
-	p.announceTicker = time.NewTicker(leaderAnnouncementInterval * time.Millisecond)
+	p.announceTicker = time.NewTicker(leaderAnnouncementInterval * time.Second)
 
 	go func() {
 		for range p.announceTicker.C {
